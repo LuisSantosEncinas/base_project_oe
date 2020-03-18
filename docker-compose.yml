@@ -2,17 +2,18 @@ version: '2'
 services:
   web:
     image: fpfis/httpd-php-dev:7.1
-    working_dir: /var/www/html
+    working_dir: ${PWD}
     ports:
       - 8080:8080
     volumes:
-      - .:/var/www/html # Non Mac users.
+      - ${PWD}:${PWD} # Non Mac users.
       # - nfsmount:/var/www/html # Mac Users with the nfsmount volume.
     environment:
       # ASDA CREDENTIALS
       # By leaving these variables empty Docker Compose will set them to their host values.
       ASDA_USER:
       ASDA_PASSWORD:
+      DOCUMENT_ROOT: ${PWD}
       # XDEBUG CONFIGURATION
       XDEBUG_CONFIG: "remote_enable=1 remote_host=10.254.254.254 remote_port=9000 idekey=PHPSTORM remote_autostart=1"
       PHP_IDE_CONFIG: "serverName=Docker"
@@ -25,6 +26,8 @@ services:
     image: percona/percona-server:5.6
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - mysql-volume:/var/lib/mysql
 #    ports:
 #      - 3306:3306
 
@@ -38,6 +41,9 @@ services:
       - 5900:5900
     expose:
       - 4444
+
+volumes:
+  mysql-volume:
 
 #### Mac users: uncomment the "volumes" key to enable the NFS file sharing. You can find more information about Docker for Mac here: https://github.com/openeuropa/openeuropa/blob/master/docs/starting/tooling.md#using-docker-on-macos
 
